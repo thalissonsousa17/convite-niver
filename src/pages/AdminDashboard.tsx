@@ -110,6 +110,43 @@ function AbaConvidados() {
   const recusados = lista.filter((c) => !c.confirmado)
   const totalPessoas = confirmados.reduce((acc, c) => acc + (c.tem_acompanhante ? 2 : 1), 0)
 
+  function imprimirListaConvidados() {
+    const conteudo = `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Lista de convidados — Festa de Thalisson</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; color: #000; }
+          h1 { font-size: 20px; margin-bottom: 4px; }
+          .subtitulo { font-size: 13px; color: #555; margin-bottom: 30px; }
+          .membro { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; page-break-inside: avoid; }
+          .membro-nome { font-size: 14px; min-width: 220px; }
+          .linha-assinatura { flex: 1; border-bottom: 1px solid #999; height: 20px; }
+          @media print { body { padding: 20px; } }
+        </style>
+      </head>
+      <body>
+        <h1>Lista de convidados — Festa de Thalisson 🎉</h1>
+        <p class="subtitulo">Domingo, 02 de agosto de 2026 · 12h00 · Rua Senador João Cavalcante de Arruda, 844</p>
+        ${confirmados.map((c) => `
+          <div class="membro">
+            <span class="membro-nome">• ${c.nome}${c.nome_acompanhante ? ` + ${c.nome_acompanhante}` : ''}</span>
+            <div class="linha-assinatura"></div>
+          </div>
+        `).join('')}
+      </body>
+      </html>
+    `
+    const janela = window.open('', '_blank')
+    if (janela) {
+      janela.document.write(conteudo)
+      janela.document.close()
+      janela.print()
+    }
+  }
+
   return (
     <>
       <div className="mt-6 grid grid-cols-3 gap-3">
@@ -134,7 +171,7 @@ function AbaConvidados() {
               ⬇ Exportar .csv
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={imprimirListaConvidados}
               className="flex items-center gap-2 rounded-xl bg-ouro/20 px-4 py-2 text-sm font-semibold text-ouro transition hover:bg-ouro/30"
             >
               🖨 Imprimir
