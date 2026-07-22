@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom'
 import { supabase, type Grupo } from '../lib/supabase'
 import Card from '../components/Card'
 import ConfettiBurst from '../components/ConfettiBurst'
+import BoomScreen, { DUR_BOOM } from '../components/BoomScreen'
 import { festa } from '../config/festa'
 
-type Fase = 'carregando' | 'confirmar' | 'sucesso' | 'jaConfirmado' | 'naoEncontrado'
+type Fase = 'carregando' | 'confirmar' | 'boom' | 'sucesso' | 'jaConfirmado' | 'naoEncontrado'
 
 export default function GrupoConvite() {
   const { slug } = useParams<{ slug: string }>()
@@ -43,7 +44,10 @@ export default function GrupoConvite() {
       .eq('slug', slug)
 
     setEnviando(false)
-    if (!error) setFase('sucesso')
+    if (!error) {
+      setFase('boom')
+      setTimeout(() => setFase('sucesso'), DUR_BOOM)
+    }
   }
 
   function listarMembros(membros: string[]) {
@@ -69,6 +73,10 @@ export default function GrupoConvite() {
         <p className="mt-2 text-sm text-creme/60">Verifique o link com quem te enviou.</p>
       </Card>
     )
+  }
+
+  if (fase === 'boom') {
+    return <BoomScreen />
   }
 
   if (fase === 'jaConfirmado' && grupo) {
@@ -104,7 +112,7 @@ export default function GrupoConvite() {
           </h1>
           <p className="mt-3 text-creme/80">
             <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>
-            {' '}— vai ser incrível ter vocês na festa do{' '}
+            {' '}— vai ser incrível ter vocês na festa de{' '}
             <span className="font-semibold text-ouro">{festa.aniversariante}</span>!
           </p>
           <div className="mt-6 space-y-2 rounded-2xl bg-noite p-5 text-left">
@@ -132,11 +140,7 @@ export default function GrupoConvite() {
           Olá, <span className="text-ouro">{listarMembros(grupo.membros)}</span>! 🎉
         </h1>
 
-        <p className="mt-3 text-creme/70">
-          Vocês estão convidados para a festa de{' '}
-          <span className="font-semibold text-ouro">{festa.aniversariante}</span>
-          {festa.idade ? ` (${festa.idade} anos)` : ''}.
-        </p>
+        <p className="mt-3 text-creme/70">{festa.mensagemConvite}</p>
 
         <div className="mt-5 space-y-2 rounded-2xl bg-noite p-5 text-left">
           <Detalhe rotulo="📅 Data" valor={festa.data} />
