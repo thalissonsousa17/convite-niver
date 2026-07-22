@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎈</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Festa do Thalin 🎉</title>
+    <style>
+      @keyframes riseUp {
+        0%   { transform: translateY(0px)    rotate(-6deg); opacity: 0;    }
+        8%   { transform: translateY(-8vh)   rotate(-3deg); opacity: 0.85; }
+        92%  { transform: translateY(-108vh) rotate( 4deg); opacity: 0.75; }
+        100% { transform: translateY(-120vh) rotate( 6deg); opacity: 0;    }
+      }
+      @keyframes riseUpB {
+        0%   { transform: translateY(0px)    rotate( 5deg); opacity: 0;    }
+        8%   { transform: translateY(-8vh)   rotate( 3deg); opacity: 0.85; }
+        92%  { transform: translateY(-108vh) rotate(-4deg); opacity: 0.75; }
+        100% { transform: translateY(-120vh) rotate(-6deg); opacity: 0;    }
+      }
+      @keyframes riseUpC {
+        0%   { transform: translateY(0px)    rotate( 0deg); opacity: 0;    }
+        8%   { transform: translateY(-8vh)   rotate( 2deg); opacity: 0.85; }
+        92%  { transform: translateY(-108vh) rotate(-3deg); opacity: 0.75; }
+        100% { transform: translateY(-120vh) rotate( 4deg); opacity: 0;    }
+      }
+      @keyframes twinkle {
+        0%, 100% { opacity: 0.35; transform: scale(1)   rotate(0deg);  }
+        50%       { opacity: 0.9;  transform: scale(1.4) rotate(20deg); }
+      }
+      @keyframes boomFlash {
+        0%   { opacity: 0.85; }
+        100% { opacity: 0; }
+      }
+      @keyframes boomRing {
+        0%   { transform: translate(-50%,-50%) scale(0.05); opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(5);    opacity: 0; }
+      }
+      @keyframes boomRing2 {
+        0%   { transform: translate(-50%,-50%) scale(0.05); opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(3.5);  opacity: 0; }
+      }
+      @keyframes boomEmoji {
+        0%   { transform: translate(-50%,-50%) scale(0.2); opacity: 0; }
+        35%  { transform: translate(-50%,-50%) scale(1.5); opacity: 1; }
+        70%  { transform: translate(-50%,-50%) scale(1.1); opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(0.6); opacity: 0; }
+      }
+      @keyframes boomStar {
+        0%   { transform: translate(-50%,-50%) scale(0) rotate(0deg);   opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(2) rotate(180deg); opacity: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
