@@ -88,7 +88,7 @@ export default function GrupoConvite() {
         </h1>
         <p className="mt-3 text-amber-100">
           <span className="font-semibold text-amber-300">{listarMembros(grupo.membros)}</span>
-          , vocês já estão na lista! A gente tá ansioso pra festa. Até lá! 🥳
+          , pode chegar que vocês já estão confirmados! A festa vai ser incrível. Até domingo! 🎉
         </p>
         <div className="mt-6 space-y-2 rounded-2xl bg-black/20 p-5 text-left">
           <Detalhe rotulo="📅 Data" valor={festa.data} />
