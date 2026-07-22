@@ -103,8 +103,8 @@ export default function GrupoConvite() {
     return (
       <>
         <ConfettiBurst />
-        <Card className="animate-[pop_0.5s_ease-out] text-center">
-          <p className="font-display text-sm uppercase tracking-[0.2em] text-turquesa">
+        <Card className="animate-[pop_0.5s_ease-out] text-center !bg-gradient-to-b !from-[#064e3b] !to-[#065f46] !border-emerald-500/30">
+          <p className="font-display text-sm uppercase tracking-[0.2em] text-emerald-300">
             Presença confirmada
           </p>
           <h1 className="mt-3 font-display text-3xl font-bold leading-snug text-creme sm:text-4xl">
