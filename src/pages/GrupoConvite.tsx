@@ -81,16 +81,16 @@ export default function GrupoConvite() {
 
   if (fase === 'jaConfirmado' && grupo) {
     return (
-      <Card className="text-center">
+      <Card className="text-center !bg-gradient-to-b !from-[#78350f] !to-[#92400e] !border-amber-500/30">
         <p className="text-4xl">🎊</p>
-        <h1 className="mt-3 font-display text-2xl font-bold text-creme">
+        <h1 className="mt-3 font-display text-2xl font-bold text-white">
           Presença já confirmada!
         </h1>
-        <p className="mt-3 text-creme/70">
-          <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>
-          {' '}— a gente te espera na festa! 🥳
+        <p className="mt-3 text-amber-100">
+          <span className="font-semibold text-amber-300">{listarMembros(grupo.membros)}</span>
+          , vocês já estão na lista! A gente tá ansioso pra festa. Até lá! 🥳
         </p>
-        <div className="mt-6 space-y-2 rounded-2xl bg-noite p-5 text-left">
+        <div className="mt-6 space-y-2 rounded-2xl bg-black/20 p-5 text-left">
           <Detalhe rotulo="📅 Data" valor={festa.data} />
           <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
           <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
