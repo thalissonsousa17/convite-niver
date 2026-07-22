@@ -9,6 +9,6 @@ export const festa = {
   local: 'Rua Senador João Cavalcante de Arruda, 844 — Presidente Médici',
   linkLocal: 'https://maps.google.com/?q=Rua+Senador+Joao+Cavalcante+de+Arruda,844,Presidente+Medici', // link do Google Maps (opcional)
   mensagemConvite:
-    'chegou a hora de reunir a galera e celebrar mais um ano incrível! Vai ter bolo, música boa e muita animação. Você não pode ficar de fora!',
+    'chegou a hora de celebrar os 35 anos de Thalisson! Vai ter almoço com churrasco, bolo e muita animação a partir das 12h00. Você não pode ficar de fora!',
   observacoes: 'Bebidas alcoólicas serão por conta de cada convidado. 🍺',
 }
