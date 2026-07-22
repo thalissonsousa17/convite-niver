@@ -283,12 +283,41 @@ function AbaGrupos() {
     .reduce((acc, g) => acc + g.membros.length, 0)
   const totalPendentes = grupos.filter((g) => !g.confirmado).length
 
+  function exportarCSVGrupos() {
+    const cabecalho = ['Grupo', 'Membros', 'Status', 'Data de resposta']
+    const linhas = grupos.map((g) => [
+      g.nome_grupo,
+      g.membros.join(', '),
+      g.confirmado ? 'Confirmado' : 'Pendente',
+      new Date(g.criado_em).toLocaleString('pt-BR'),
+    ])
+    const csv = [cabecalho, ...linhas]
+      .map((l) => l.map((v) => `"${v}"`).join(';'))
+      .join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'grupos-thalisson.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <>
       <div className="mt-6 grid grid-cols-3 gap-3">
         <Resumo rotulo="Grupos criados" valor={grupos.length} cor="var(--color-fucsia)" />
         <Resumo rotulo="Pessoas confirmadas" valor={totalConfirmados} cor="var(--color-turquesa)" />
         <Resumo rotulo="Aguardando" valor={totalPendentes} cor="var(--color-ouro)" />
+      </div>
+
+      <div className="mt-4 flex gap-3">
+        <button
+          onClick={exportarCSVGrupos}
+          className="flex items-center gap-2 rounded-xl bg-turquesa/20 px-4 py-2 text-sm font-semibold text-turquesa transition hover:bg-turquesa/30"
+        >
+          ⬇ Exportar grupos (.csv)
+        </button>
       </div>
 
       {/* Formulário novo grupo */}
