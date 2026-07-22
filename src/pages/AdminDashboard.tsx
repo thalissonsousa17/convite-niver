@@ -318,6 +318,12 @@ function AbaGrupos() {
         >
           ⬇ Exportar grupos (.csv)
         </button>
+        <button
+          onClick={() => window.print()}
+          className="flex items-center gap-2 rounded-xl bg-ouro/20 px-4 py-2 text-sm font-semibold text-ouro transition hover:bg-ouro/30"
+        >
+          🖨 Imprimir grupos
+        </button>
       </div>
 
       {/* Formulário novo grupo */}
