@@ -64,6 +64,7 @@ function AbaConvidados() {
   const [lista, setLista] = useState<Confirmacao[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
+  const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null)
 
   useEffect(() => { carregar() }, [])
 
@@ -80,9 +81,9 @@ function AbaConvidados() {
   }
 
   async function excluir(id: string) {
-    if (!confirm('Excluir este registro?')) return
     const { error } = await supabase.from('confirmacoes').delete().eq('id', id)
     if (!error) setLista((prev) => prev.filter((c) => c.id !== id))
+    setConfirmarExcluir(null)
   }
 
   function exportarCSV() {
@@ -149,6 +150,13 @@ function AbaConvidados() {
 
   return (
     <>
+      {confirmarExcluir && (
+        <Modal
+          mensagem="Excluir este convidado?"
+          onSim={() => excluir(confirmarExcluir)}
+          onNao={() => setConfirmarExcluir(null)}
+        />
+      )}
       <div className="mt-6 grid grid-cols-3 gap-3">
         <Resumo rotulo="Confirmaram" valor={confirmados.length} cor="var(--color-turquesa)" />
         <Resumo rotulo="Total de pessoas" valor={totalPessoas} cor="var(--color-ouro)" />
@@ -208,7 +216,7 @@ function AbaConvidados() {
                     </td>
                     <td className="p-3">
                       <button
-                        onClick={() => excluir(c.id)}
+                        onClick={() => setConfirmarExcluir(c.id)}
                         title="Excluir"
                         className="rounded-lg p-1.5 text-creme/30 transition hover:bg-red-500/20 hover:text-red-400"
                       >
@@ -242,6 +250,7 @@ function AbaGrupos() {
   const [salvando, setSalvando] = useState(false)
   const [copiado, setCopiado] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
+  const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null)
 
   useEffect(() => { carregar() }, [])
 
@@ -303,9 +312,9 @@ function AbaGrupos() {
   }
 
   async function excluirGrupo(id: string) {
-    if (!confirm('Excluir este grupo?')) return
     const { error } = await supabase.from('grupos').delete().eq('id', id)
     if (!error) setGrupos((prev) => prev.filter((g) => g.id !== id))
+    setConfirmarExcluir(null)
   }
 
   function copiarLink(slug: string) {
@@ -390,13 +399,23 @@ function AbaGrupos() {
 
   return (
     <>
+      {confirmarExcluir && (
+        <Modal
+          mensagem="Excluir este grupo?"
+          onSim={() => excluirGrupo(confirmarExcluir)}
+          onNao={() => setConfirmarExcluir(null)}
+        />
+      )}
       <div className="mt-6 grid grid-cols-3 gap-3">
         <Resumo rotulo="Grupos criados" valor={grupos.length} cor="var(--color-fucsia)" />
         <Resumo rotulo="Pessoas confirmadas" valor={totalConfirmados} cor="var(--color-turquesa)" />
         <Resumo rotulo="Aguardando" valor={totalPendentes} cor="var(--color-ouro)" />
       </div>
 
-      <div className="mt-4 flex gap-3">
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button onClick={carregar} className="text-sm text-creme/60 transition hover:text-creme">
+          ↺ Atualizar
+        </button>
         <button
           onClick={exportarCSVGrupos}
           className="flex items-center gap-2 rounded-xl bg-turquesa/20 px-4 py-2 text-sm font-semibold text-turquesa transition hover:bg-turquesa/30"
@@ -495,7 +514,7 @@ function AbaGrupos() {
                     {copiado === g.slug ? '✓ Copiado!' : '📋 Copiar link'}
                   </button>
                   <button
-                    onClick={() => excluirGrupo(g.id)}
+                    onClick={() => setConfirmarExcluir(g.id)}
                     className="rounded-lg p-1.5 text-creme/30 transition hover:bg-red-500/20 hover:text-red-400"
                   >
                     🗑
@@ -517,6 +536,31 @@ function Resumo({ rotulo, valor, cor }: { rotulo: string; valor: number; cor: st
         {valor}
       </p>
       <p className="mt-1 text-xs text-creme/60">{rotulo}</p>
+    </div>
+  )
+}
+
+function Modal({ mensagem, onSim, onNao }: { mensagem: string; onSim: () => void; onNao: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-xs rounded-2xl border border-creme/10 bg-noite-2 p-6 shadow-2xl">
+        <p className="text-center font-display text-lg font-bold text-creme">{mensagem}</p>
+        <p className="mt-1 text-center text-sm text-creme/50">Essa ação não pode ser desfeita.</p>
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={onNao}
+            className="flex-1 rounded-xl border border-creme/20 py-2.5 text-sm font-semibold text-creme/70 transition hover:bg-creme/10"
+          >
+            Não
+          </button>
+          <button
+            onClick={onSim}
+            className="flex-1 rounded-xl bg-red-500/80 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500"
+          >
+            Sim, excluir
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
