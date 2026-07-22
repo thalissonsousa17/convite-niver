@@ -3,6 +3,7 @@ import PartyDecor from './components/PartyDecor'
 import ConviteFlow from './pages/ConviteFlow'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
+import GrupoConvite from './pages/GrupoConvite'
 import { useAuth } from './hooks/useAuth'
 
 function Palco({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,14 @@ export default function App() {
           }
         />
         <Route path="/admin" element={<AdminRoute />} />
+        <Route
+          path="/g/:slug"
+          element={
+            <Palco>
+              <GrupoConvite />
+            </Palco>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )

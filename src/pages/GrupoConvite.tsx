@@ -1,0 +1,180 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { supabase, type Grupo } from '../lib/supabase'
+import Card from '../components/Card'
+import ConfettiBurst from '../components/ConfettiBurst'
+import { festa } from '../config/festa'
+
+type Fase = 'carregando' | 'confirmar' | 'sucesso' | 'jaConfirmado' | 'naoEncontrado'
+
+export default function GrupoConvite() {
+  const { slug } = useParams<{ slug: string }>()
+  const [grupo, setGrupo] = useState<Grupo | null>(null)
+  const [fase, setFase] = useState<Fase>('carregando')
+  const [enviando, setEnviando] = useState(false)
+
+  useEffect(() => {
+    async function carregar() {
+      const { data, error } = await supabase
+        .from('grupos')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+
+      if (error || !data) {
+        setFase('naoEncontrado')
+        return
+      }
+
+      setGrupo(data)
+      setFase(data.confirmado ? 'jaConfirmado' : 'confirmar')
+    }
+
+    carregar()
+  }, [slug])
+
+  async function handleConfirmar() {
+    if (!grupo) return
+    setEnviando(true)
+
+    const { error } = await supabase
+      .from('grupos')
+      .update({ confirmado: true })
+      .eq('slug', slug)
+
+    setEnviando(false)
+    if (!error) setFase('sucesso')
+  }
+
+  function listarMembros(membros: string[]) {
+    if (membros.length === 1) return membros[0]
+    const ultimo = membros[membros.length - 1]
+    const demais = membros.slice(0, -1)
+    return `${demais.join(', ')} e ${ultimo}`
+  }
+
+  if (fase === 'carregando') {
+    return (
+      <Card className="text-center">
+        <p className="text-creme/60">Carregando convite…</p>
+      </Card>
+    )
+  }
+
+  if (fase === 'naoEncontrado') {
+    return (
+      <Card className="text-center">
+        <p className="text-3xl">😕</p>
+        <p className="mt-3 font-display text-xl font-bold text-creme">Convite não encontrado</p>
+        <p className="mt-2 text-sm text-creme/60">Verifique o link com quem te enviou.</p>
+      </Card>
+    )
+  }
+
+  if (fase === 'jaConfirmado' && grupo) {
+    return (
+      <Card className="text-center">
+        <p className="text-4xl">🎊</p>
+        <h1 className="mt-3 font-display text-2xl font-bold text-creme">
+          Presença já confirmada!
+        </h1>
+        <p className="mt-3 text-creme/70">
+          <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>
+          {' '}— a gente te espera na festa! 🥳
+        </p>
+        <div className="mt-6 space-y-2 rounded-2xl bg-noite p-5 text-left">
+          <Detalhe rotulo="📅 Data" valor={festa.data} />
+          <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
+          <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
+        </div>
+      </Card>
+    )
+  }
+
+  if (fase === 'sucesso' && grupo) {
+    return (
+      <>
+        <ConfettiBurst />
+        <Card className="animate-[pop_0.5s_ease-out] text-center">
+          <p className="font-display text-sm uppercase tracking-[0.2em] text-turquesa">
+            Presença confirmada
+          </p>
+          <h1 className="mt-3 font-display text-3xl font-bold leading-snug text-creme sm:text-4xl">
+            {grupo.membros.length > 1 ? 'Vocês estão confirmados!' : 'Você está confirmado!'} 🎊
+          </h1>
+          <p className="mt-3 text-creme/80">
+            <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>
+            {' '}— vai ser incrível ter vocês na festa do{' '}
+            <span className="font-semibold text-ouro">{festa.aniversariante}</span>!
+          </p>
+          <div className="mt-6 space-y-2 rounded-2xl bg-noite p-5 text-left">
+            <Detalhe rotulo="📅 Data" valor={festa.data} />
+            <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
+            <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
+            {festa.observacoes && (
+              <Detalhe rotulo="ℹ️ Obs" valor={festa.observacoes} />
+            )}
+          </div>
+          <p className="mt-6 text-sm text-creme/60">Salva essa tela ou tira um print. A gente te espera! 🥳</p>
+        </Card>
+      </>
+    )
+  }
+
+  if (fase === 'confirmar' && grupo) {
+    return (
+      <Card className="text-center">
+        <p className="font-display text-sm uppercase tracking-[0.2em] text-turquesa">
+          Convite especial
+        </p>
+
+        <h1 className="mt-3 font-display text-2xl font-bold leading-snug text-creme sm:text-3xl">
+          {grupo.nome_grupo}
+        </h1>
+
+        <p className="mt-3 text-creme/70">
+          Olá,{' '}
+          <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>!
+          <br />
+          Vocês estão convidados para a festa de{' '}
+          <span className="font-semibold text-ouro">{festa.aniversariante}</span>
+          {festa.idade ? ` (${festa.idade} anos)` : ''}.
+        </p>
+
+        <div className="mt-5 space-y-2 rounded-2xl bg-noite p-5 text-left">
+          <Detalhe rotulo="📅 Data" valor={festa.data} />
+          <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
+          <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
+          {festa.observacoes && (
+            <Detalhe rotulo="ℹ️ Obs" valor={festa.observacoes} />
+          )}
+        </div>
+
+        <button
+          onClick={handleConfirmar}
+          disabled={enviando}
+          className="mt-6 w-full rounded-2xl bg-gradient-to-r from-turquesa to-fucsia py-4 font-display text-lg font-bold text-white shadow-lg transition hover:opacity-90 disabled:opacity-60"
+        >
+          {enviando ? 'Confirmando…' : 'Sim, todos vamos! 🎉'}
+        </button>
+      </Card>
+    )
+  }
+
+  return null
+}
+
+function Detalhe({ rotulo, valor, link }: { rotulo: string; valor: string; link?: string }) {
+  return (
+    <p className="text-sm text-creme/85">
+      <span className="font-semibold text-creme">{rotulo}: </span>
+      {link ? (
+        <a href={link} target="_blank" rel="noreferrer" className="text-turquesa underline underline-offset-2">
+          {valor}
+        </a>
+      ) : (
+        valor
+      )}
+    </p>
+  )
+}

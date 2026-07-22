@@ -44,3 +44,12 @@ export type Confirmacao = {
   confirmado: boolean
   criado_em: string
 }
+
+export type Grupo = {
+  id: string
+  slug: string
+  nome_grupo: string
+  membros: string[]
+  confirmado: boolean
+  criado_em: string
+}
