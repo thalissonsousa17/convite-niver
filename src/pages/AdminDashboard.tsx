@@ -10,9 +10,10 @@ export default function AdminDashboard() {
     <>
       <style>{`
         @media print {
-          body > * { display: none !important; }
-          #print-area { display: block !important; position: static !important; }
-          #print-area * { color: #000 !important; background: #fff !important; border-color: #ccc !important; }
+          body * { visibility: hidden; }
+          #print-area, #print-area * { visibility: visible; }
+          #print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
+          #print-area * { color: #000 !important; background: transparent !important; border-color: #ccc !important; }
         }
       `}</style>
 
