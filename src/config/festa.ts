@@ -2,7 +2,7 @@
 // Esse é o único arquivo que você provavelmente precisa mudar antes de publicar.
 
 export const festa = {
-  aniversariante: 'Thalin',
+  aniversariante: 'Thalisson',
   idade: '35', // deixe '' se não quiser mostrar a idade
   data: 'Domingo, 02 de agosto de 2026',
   horario: '12h00',
