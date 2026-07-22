@@ -6,7 +6,7 @@ import ConfettiBurst from '../components/ConfettiBurst'
 import BoomScreen, { DUR_BOOM } from '../components/BoomScreen'
 import { festa } from '../config/festa'
 
-type Fase = 'carregando' | 'confirmar' | 'boom' | 'sucesso' | 'jaConfirmado' | 'naoEncontrado'
+type Fase = 'carregando' | 'confirmar' | 'boom' | 'confirmado' | 'naoEncontrado'
 
 export default function GrupoConvite() {
   const { slug } = useParams<{ slug: string }>()
@@ -28,7 +28,7 @@ export default function GrupoConvite() {
       }
 
       setGrupo(data)
-      setFase(data.confirmado ? 'jaConfirmado' : 'confirmar')
+      setFase(data.confirmado ? 'confirmado' : 'confirmar')
     }
 
     carregar()
@@ -46,7 +46,7 @@ export default function GrupoConvite() {
     setEnviando(false)
     if (!error) {
       setFase('boom')
-      setTimeout(() => setFase('sucesso'), DUR_BOOM)
+      setTimeout(() => setFase('confirmado'), DUR_BOOM)
     }
   }
 
@@ -79,43 +79,20 @@ export default function GrupoConvite() {
     return <BoomScreen />
   }
 
-  if (fase === 'jaConfirmado' && grupo) {
-    return (
-      <Card className="text-center !bg-gradient-to-b !from-[#78350f] !to-[#92400e] !border-amber-500/30">
-        <p className="text-4xl">🎊</p>
-        <h1 className="mt-3 font-display text-2xl font-bold text-white">
-          Presença já confirmada!
-        </h1>
-        <p className="mt-3 text-amber-100">
-          <span className="font-semibold text-amber-300">{listarMembros(grupo.membros)}</span>
-          , pode chegar que vocês já estão confirmados! A festa vai ser incrível. Até domingo! 🎉
-        </p>
-        <div className="mt-6 space-y-2 rounded-2xl bg-black/20 p-5 text-left">
-          <Detalhe rotulo="📅 Data" valor={festa.data} />
-          <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
-          <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
-        </div>
-      </Card>
-    )
-  }
-
-  if (fase === 'sucesso' && grupo) {
+  if (fase === 'confirmado' && grupo) {
     return (
       <>
         <ConfettiBurst />
-        <Card className="animate-[pop_0.5s_ease-out] text-center">
-          <p className="font-display text-sm uppercase tracking-[0.2em] text-turquesa">
-            Presença confirmada
-          </p>
-          <h1 className="mt-3 font-display text-3xl font-bold leading-snug text-creme sm:text-4xl">
-            {grupo.membros.length > 1 ? 'Vocês estão confirmados!' : 'Você está confirmado!'} 🎊
+        <Card className="animate-[pop_0.5s_ease-out] text-center !bg-gradient-to-b !from-[#78350f] !to-[#92400e] !border-amber-500/30">
+          <p className="text-4xl">🎊</p>
+          <h1 className="mt-3 font-display text-2xl font-bold text-white">
+            Presença confirmada!
           </h1>
-          <p className="mt-3 text-creme/80">
-            <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>
-            {' '}— vai ser incrível ter vocês na festa de{' '}
-            <span className="font-semibold text-ouro">{festa.aniversariante}</span>!
+          <p className="mt-3 text-amber-100">
+            <span className="font-semibold text-amber-300">{listarMembros(grupo.membros)}</span>
+            , pode chegar que vocês já estão confirmados! A festa vai ser incrível. Até domingo! 🎉
           </p>
-          <div className="mt-6 space-y-2 rounded-2xl bg-noite p-5 text-left">
+          <div className="mt-6 space-y-2 rounded-2xl bg-black/20 p-5 text-left">
             <Detalhe rotulo="📅 Data" valor={festa.data} />
             <Detalhe rotulo="🕛 Horário" valor={festa.horario} />
             <Detalhe rotulo="📍 Local" valor={festa.local} link={festa.linkLocal || undefined} />
@@ -123,7 +100,7 @@ export default function GrupoConvite() {
               <Detalhe rotulo="ℹ️ Obs" valor={festa.observacoes} />
             )}
           </div>
-          <p className="mt-6 text-sm text-creme/60">Salva essa tela ou tira um print. A gente te espera! 🥳</p>
+          <p className="mt-6 text-sm text-amber-200/70">Salva essa tela ou tira um print. A gente te espera! 🥳</p>
         </Card>
       </>
     )
