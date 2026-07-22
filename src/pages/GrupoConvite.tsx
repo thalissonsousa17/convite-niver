@@ -125,17 +125,14 @@ export default function GrupoConvite() {
     return (
       <Card className="text-center">
         <p className="font-display text-sm uppercase tracking-[0.2em] text-turquesa">
-          Convite especial
+          Convite de Aniversário
         </p>
 
         <h1 className="mt-3 font-display text-2xl font-bold leading-snug text-creme sm:text-3xl">
-          {grupo.nome_grupo}
+          Olá, <span className="text-ouro">{listarMembros(grupo.membros)}</span>! 🎉
         </h1>
 
         <p className="mt-3 text-creme/70">
-          Olá,{' '}
-          <span className="font-semibold text-ouro">{listarMembros(grupo.membros)}</span>!
-          <br />
           Vocês estão convidados para a festa de{' '}
           <span className="font-semibold text-ouro">{festa.aniversariante}</span>
           {festa.idade ? ` (${festa.idade} anos)` : ''}.

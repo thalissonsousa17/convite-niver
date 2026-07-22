@@ -10,5 +10,5 @@ export const festa = {
   linkLocal: 'https://maps.google.com/?q=Rua+Senador+Joao+Cavalcante+de+Arruda,844,Presidente+Medici', // link do Google Maps (opcional)
   mensagemConvite:
     'chegou a hora de reunir a galera e celebrar mais um ano incrível! Vai ter bolo, música boa e muita animação. Você não pode ficar de fora!',
-  observacoes: 'As bebidas alcoólicas serão por conta de cada convidado. 🍺',
+  observacoes: 'Bebidas alcoólicas serão por conta de cada convidado. 🍺',
 }
