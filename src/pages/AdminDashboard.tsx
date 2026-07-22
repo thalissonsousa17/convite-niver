@@ -283,6 +283,54 @@ function AbaGrupos() {
     .reduce((acc, g) => acc + g.membros.length, 0)
   const totalPendentes = grupos.filter((g) => !g.confirmado).length
 
+  function imprimirListaGrupos() {
+    const conteudo = `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Lista de convidados — Festa de Thalisson</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; color: #000; }
+          h1 { font-size: 20px; margin-bottom: 4px; }
+          .subtitulo { font-size: 13px; color: #555; margin-bottom: 30px; }
+          .grupo { margin-bottom: 28px; page-break-inside: avoid; }
+          .grupo-nome { font-size: 16px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 10px; }
+          .status { font-size: 12px; font-weight: normal; color: #555; margin-left: 8px; }
+          .membro { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+          .membro-nome { font-size: 14px; min-width: 180px; }
+          .linha-assinatura { flex: 1; border-bottom: 1px solid #999; height: 20px; }
+          @media print { body { padding: 20px; } }
+        </style>
+      </head>
+      <body>
+        <h1>Lista de convidados — Festa de Thalisson 🎉</h1>
+        <p class="subtitulo">Domingo, 02 de agosto de 2026 · 12h00 · Rua Senador João Cavalcante de Arruda, 844</p>
+        ${grupos.map((g) => `
+          <div class="grupo">
+            <div class="grupo-nome">
+              ${g.nome_grupo}
+              <span class="status">${g.confirmado ? '✓ Confirmado' : '⏳ Pendente'}</span>
+            </div>
+            ${g.membros.map((m) => `
+              <div class="membro">
+                <span class="membro-nome">• ${m}</span>
+                <div class="linha-assinatura"></div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </body>
+      </html>
+    `
+    const janela = window.open('', '_blank')
+    if (janela) {
+      janela.document.write(conteudo)
+      janela.document.close()
+      janela.print()
+    }
+  }
+
   function exportarCSVGrupos() {
     const cabecalho = ['Grupo', 'Membros', 'Status', 'Data de resposta']
     const linhas = grupos.map((g) => [
@@ -319,10 +367,10 @@ function AbaGrupos() {
           ⬇ Exportar grupos (.csv)
         </button>
         <button
-          onClick={() => window.print()}
+          onClick={imprimirListaGrupos}
           className="flex items-center gap-2 rounded-xl bg-ouro/20 px-4 py-2 text-sm font-semibold text-ouro transition hover:bg-ouro/30"
         >
-          🖨 Imprimir grupos
+          🖨 Imprimir lista
         </button>
       </div>
 
