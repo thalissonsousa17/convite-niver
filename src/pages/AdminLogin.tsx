@@ -24,20 +24,22 @@ export default function AdminLogin() {
       <p className="mt-2 text-sm text-creme/70">Entre para ver a lista de convidados confirmados.</p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-semibold text-ouro">E-mail</span>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="login-email" className="text-sm font-semibold text-ouro">E-mail</label>
           <input
+            id="login-email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="rounded-xl border border-creme/15 bg-noite px-4 py-3 text-creme outline-none focus:border-turquesa"
           />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-semibold text-ouro">Senha</span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="login-senha" className="text-sm font-semibold text-ouro">Senha</label>
           <div className="relative">
             <input
+              id="login-senha"
               type={mostrarSenha ? 'text' : 'password'}
               required
               value={senha}
@@ -65,7 +67,7 @@ export default function AdminLogin() {
               )}
             </button>
           </div>
-        </label>
+        </div>
 
         {erro && <p className="text-sm text-fucsia">{erro}</p>}
 

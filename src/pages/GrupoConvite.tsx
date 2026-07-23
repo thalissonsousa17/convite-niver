@@ -5,6 +5,7 @@ import Card from '../components/Card'
 import ConfettiBurst from '../components/ConfettiBurst'
 import BoomScreen, { DUR_BOOM } from '../components/BoomScreen'
 import { festa } from '../config/festa'
+import { listarMembros } from '../utils/membros'
 
 type Fase = 'carregando' | 'confirmar' | 'boom' | 'confirmado' | 'naoEncontrado'
 
@@ -48,13 +49,6 @@ export default function GrupoConvite() {
       setFase('boom')
       setTimeout(() => setFase('confirmado'), DUR_BOOM)
     }
-  }
-
-  function listarMembros(membros: string[]) {
-    if (membros.length === 1) return membros[0]
-    const ultimo = membros[membros.length - 1]
-    const demais = membros.slice(0, -1)
-    return `${demais.join(', ')} e ${ultimo}`
   }
 
   if (fase === 'carregando') {

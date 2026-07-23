@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Confirmacao, type Grupo } from '../lib/supabase'
+import { gerarSlug } from '../utils/slug'
 
 type Aba = 'convidados' | 'grupos'
 
@@ -262,15 +263,6 @@ function AbaGrupos() {
       .order('criado_em', { ascending: false })
     setGrupos(data ?? [])
     setCarregando(false)
-  }
-
-  function gerarSlug(nome: string) {
-    return nome
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
   }
 
   async function criarGrupo() {

@@ -1,90 +1,227 @@
-# Convite de Aniversário 🎉
+# Convite de Aniversário — Festa do Thalisson 🎉
 
-App de convite com RSVP: quem recebe o link marca **Sim/Não**, preenche o nome (e do
-acompanhante, se houver) e recebe um convite personalizado com explosão de confete.
-Todas as respostas ficam salvas no Supabase, e você acompanha tudo numa área
-administrativa protegida por login em `/admin`.
+App web de convite interativo com confirmação de presença (RSVP), painel administrativo e sistema de convites por grupos/famílias. Desenvolvido para a festa de 35 anos de Thalisson.
 
-## 1. Editar os dados da festa
+**Demo:** [convite-niver-umber.vercel.app](https://convite-niver-umber.vercel.app)
 
-Abra `src/config/festa.ts` e preencha com as informações reais: nome do
-aniversariante, idade, data, horário, local e mensagem do convite.
+---
 
-## 2. Criar o projeto no Supabase (banco + login)
+## Funcionalidades
 
-1. Crie uma conta em [supabase.com](https://supabase.com) e clique em **New project**.
-2. Escolha um nome, senha do banco e região (ex: São Paulo) e aguarde a criação (~2 min).
-3. No menu lateral, vá em **SQL Editor** → **New query**, cole o conteúdo do arquivo
-   `supabase/schema.sql` (deste projeto) e clique em **Run**. Isso cria a tabela
-   `confirmacoes` já com as permissões corretas (qualquer um pode confirmar presença,
-   só você logado pode ver a lista).
-4. Vá em **Authentication → Users → Add user** e crie o seu usuário admin (e-mail e
-   senha que você vai usar para logar em `/admin`).
-5. Vá em **Project Settings → API** e copie:
-   - **Project URL**
-   - **anon public key**
+### Para os convidados
+- Convite animado com balões e serpentinas no fundo
+- Botão **"Sim, vou!"** → formulário de nome + acompanhante → tela final com explosão e confete
+- Botão **"Não vou poder"** → formulário de registro + tela de agradecimento
+- **Convite de grupo/família** via link único (`/g/:slug`): um clique confirma toda a família
 
-## 3. Configurar as variáveis de ambiente
+### Para o organizador (`/admin`)
+- Login protegido com e-mail e senha (Supabase Auth)
+- Campo senha com botão para mostrar/ocultar
+- **Aba Convidados:** lista de todos, contadores (confirmados / total de pessoas / recusados), exportar CSV, imprimir lista com linhas de assinatura, excluir com modal de confirmação
+- **Aba Grupos/Famílias:** criar grupos com nome + membros, copiar link compartilhável, exportar CSV de grupos, imprimir lista por grupo com linhas de assinatura, excluir com modal, botão Atualizar
 
-Copie o arquivo de exemplo e preencha com os dados do passo anterior:
+---
+
+## Stack
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Frontend | React 19 + TypeScript |
+| Bundler | Vite 8 |
+| Estilo | Tailwind CSS v4 (`@theme` + CSS custom properties) |
+| Roteamento | React Router v7 |
+| Backend/DB | Supabase (PostgreSQL + Auth + PostgREST) |
+| Deploy | Vercel (SPA com `vercel.json` rewrites) |
+| Testes | Vitest + React Testing Library |
+
+---
+
+## Estrutura do projeto
+
+```
+src/
+  config/
+    festa.ts            ← dados da festa (único arquivo a editar por evento)
+  lib/
+    supabase.ts         ← cliente Supabase + tipos + mock para modo demo
+  hooks/
+    useAuth.ts          ← gerencia sessão de login do admin
+  utils/
+    slug.ts             ← gerarSlug() — normaliza nome em URL amigável
+    membros.ts          ← listarMembros() — formata lista com "e" no final
+  components/
+    Card.tsx            ← container visual principal
+    PartyDecor.tsx      ← balões e serpentinas animados no fundo
+    ConfettiBurst.tsx   ← explosão de confete (canvas-confetti)
+    BoomScreen.tsx      ← animação de explosão compartilhada
+  pages/
+    Landing.tsx         ← tela inicial: Sim / Não
+    ConviteFlow.tsx     ← orquestra o fluxo individual do convidado
+    RSVPForm.tsx        ← formulário de quem vai (nome + acompanhante)
+    InviteReveal.tsx    ← convite final com confete
+    DeclineForm.tsx     ← formulário de quem não vai
+    Decline.tsx         ← tela de agradecimento a quem não vai
+    GrupoConvite.tsx    ← convite de grupo via /g/:slug
+    AdminLogin.tsx      ← login do organizador
+    AdminDashboard.tsx  ← painel admin (convidados + grupos)
+  test/
+    setup.ts            ← configuração global dos testes (jest-dom)
+supabase/
+  schema.sql            ← script SQL completo (tabelas + RLS)
+vercel.json             ← rewrite para SPA routing
+```
+
+---
+
+## Configuração da festa
+
+Abra `src/config/festa.ts` e preencha:
+
+```typescript
+export const festa = {
+  aniversariante: 'Thalisson',
+  idade: '35',
+  data: 'Domingo, 02 de agosto de 2026',
+  horario: '12h00',
+  local: 'Rua Senador João Cavalcante de Arruda, 844 — Presidente Médici',
+  linkLocal: 'https://maps.google.com/?q=...',
+  mensagemConvite: 'chegou a hora de celebrar...',
+  observacoes: 'Bebidas alcoólicas serão por conta de cada convidado. 🍺',
+}
+```
+
+---
+
+## Banco de dados (Supabase)
+
+### 1. Criar projeto no Supabase
+
+1. Acesse [supabase.com](https://supabase.com) → **New project**
+2. Aguarde a criação (~2 min)
+3. No menu lateral: **SQL Editor → New query** → cole o conteúdo de `supabase/schema.sql` → **Run**
+4. Crie o usuário admin: **Authentication → Users → Add user** (e-mail + senha para usar em `/admin`)
+5. Copie em **Project Settings → API**: a **Project URL** e a **anon public key**
+
+### Tabelas criadas pelo schema.sql
+
+**`confirmacoes`** — respostas individuais
+| coluna | tipo | descrição |
+|--------|------|-----------|
+| id | uuid | chave primária |
+| nome | text | nome do convidado |
+| tem_acompanhante | boolean | se vai com acompanhante |
+| nome_acompanhante | text\|null | nome do acompanhante |
+| confirmado | boolean | true = vai / false = não vai |
+| criado_em | timestamptz | data/hora da resposta |
+
+**`grupos`** — convites de família/grupo
+| coluna | tipo | descrição |
+|--------|------|-----------|
+| id | uuid | chave primária |
+| slug | text | identificador único na URL (ex: `familia-silva`) |
+| nome_grupo | text | nome do grupo para o admin |
+| membros | text[] | array com os nomes dos membros |
+| confirmado | boolean | true = grupo confirmou |
+| criado_em | timestamptz | data/hora do cadastro |
+
+### Políticas RLS
+- **Anônimo** pode apenas `INSERT` em `confirmacoes` e atualizar `confirmado` em `grupos`
+- **Autenticado** pode `SELECT`, `DELETE` e criar novos grupos
+- Ninguém apaga ou altera registros pela API pública sem login
+
+---
+
+## Variáveis de ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-```
+```env
 VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
 VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
 ```
 
-## 4. Rodar localmente
+> **Modo demo:** sem as variáveis, o app usa um cliente mock — funciona visualmente mas não salva dados.
+
+---
+
+## Desenvolvimento local
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:5173
 ```
 
-Acesse `http://localhost:5173` para o convite e `http://localhost:5173/admin`
-para a área administrativa.
+- `/` — fluxo do convidado
+- `/admin` — painel administrativo
+- `/g/:slug` — convite de grupo (ex: `/g/familia-silva`)
 
-## 5. Publicar na Vercel
+---
 
-1. Suba este projeto para um repositório no GitHub.
-2. Em [vercel.com](https://vercel.com), clique em **Add New → Project** e importe o repositório.
-3. A Vercel detecta automaticamente que é um projeto Vite — não precisa mudar nada no build.
-4. Em **Environment Variables**, adicione as duas variáveis do passo 3
-   (`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`).
-5. Clique em **Deploy**. Em ~1 minuto você recebe o link público (ex:
-   `https://convite-thalin.vercel.app`) — é esse link que você envia para os convidados.
+## Testes
 
-## Como funciona por dentro
+```bash
+npm test                # roda todos os testes uma vez
+npm run test:watch      # modo watch (re-roda ao salvar)
+npm run test:coverage   # relatório de cobertura
+```
 
-- `/` — fluxo do convidado: Sim/Não → formulário de nome (+ acompanhante, se marcado,
-  ou apenas nome se marcar Não) → tela final com confete e o convite personalizado.
-- `/admin` — tela de login (e-mail/senha do usuário Supabase que você criou) e, depois
-  de logado, a lista de todos que responderam, com contagem de confirmados, total de
-  pessoas (contando acompanhantes) e quem não vai.
-- Toda resposta (Sim ou Não) é gravada na tabela `confirmacoes` do Supabase — é a sua
-  "planilha" de controle, sempre atualizada em tempo real.
-- Segurança: as regras (Row Level Security) do banco garantem que qualquer visitante
-  só pode *inserir* uma resposta, mas só quem faz login consegue *ler* a lista completa.
+### Cobertura atual (27 testes)
 
-## Estrutura de pastas
+| Arquivo | O que testa |
+|---------|-------------|
+| `utils/slug.test.ts` | `gerarSlug`: acentos, hífens, espaços, caracteres especiais |
+| `utils/membros.test.ts` | `listarMembros`: 0, 1, 2, 3 e 4+ membros |
+| `pages/Landing.test.tsx` | renderização do título, botões Sim/Não, callbacks |
+| `pages/RSVPForm.test.tsx` | validação, campo acompanhante, submit, erro, voltar |
+| `pages/AdminLogin.test.tsx` | campos, toggle mostrar/ocultar senha, botão Entrar |
+
+---
+
+## Deploy na Vercel
+
+1. Suba o projeto para o GitHub
+2. Em [vercel.com](https://vercel.com): **Add New → Project** → importe o repositório
+3. Em **Environment Variables**, adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`
+4. **Deploy** — a Vercel detecta Vite automaticamente
+
+O arquivo `vercel.json` garante que o roteamento SPA funcione corretamente:
+
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
+```
+
+---
+
+## Fluxos principais
 
 ```
-src/
-  config/festa.ts       ← dados da festa (edite aqui)
-  lib/supabase.ts        ← conexão com o Supabase
-  hooks/useAuth.ts        ← controle de sessão de login
-  components/             ← Card, decoração de balões/serpentinas, confete
-  pages/
-    ConviteFlow.tsx       ← orquestra o fluxo do convidado
-    Landing.tsx           ← tela Sim/Não
-    RSVPForm.tsx          ← formulário de quem vai
-    DeclineForm.tsx       ← formulário de quem não vai
-    InviteReveal.tsx      ← convite final com confete
-    Decline.tsx           ← tela de agradecimento de quem não vai
-    AdminLogin.tsx        ← login do organizador
-    AdminDashboard.tsx    ← lista de confirmados
-supabase/schema.sql       ← script SQL para rodar no Supabase
+Convidado individual
+  / → Landing (Sim/Não)
+        ↓ Sim
+      RSVPForm (nome + acompanhante)
+        ↓ submit → Supabase
+      BoomScreen (explosão 900ms)
+        ↓
+      InviteReveal (convite + confete)
+
+Convidado individual
+  / → Landing
+        ↓ Não
+      DeclineForm (nome)
+        ↓ submit → Supabase
+      Decline (agradecimento)
+
+Convite de grupo
+  /g/:slug → GrupoConvite
+    carregando → confirmar → BoomScreen → confirmado (âmbar)
+    ou: já confirmado → direto para confirmado (âmbar)
+    ou: slug inválido → erro
+
+Admin
+  /admin → AdminLogin (e-mail + senha)
+         → AdminDashboard
+             ├── Aba Convidados (lista, CSV, print, excluir)
+             └── Aba Grupos (criar, copiar link, CSV, print, excluir)
 ```
