@@ -1,8 +1,6 @@
-# Convite de Aniversário — Festa do Thalisson 🎉
+# Convite de Aniversário 🎉
 
-App web de convite interativo com confirmação de presença (RSVP), painel administrativo e sistema de convites por grupos/famílias. Desenvolvido para a festa de 35 anos de Thalisson.
-
-**Demo:** [convite-niver-umber.vercel.app](https://convite-niver-umber.vercel.app)
+App web de convite interativo com confirmação de presença (RSVP), painel administrativo e sistema de convites por grupos/famílias. Personalizável para qualquer evento — basta editar um único arquivo de configuração.
 
 ---
 
@@ -79,13 +77,13 @@ Abra `src/config/festa.ts` e preencha:
 
 ```typescript
 export const festa = {
-  aniversariante: 'Thalisson',
-  idade: '35',
-  data: 'Domingo, 02 de agosto de 2026',
-  horario: '12h00',
-  local: 'Rua Senador João Cavalcante de Arruda, 844 — Presidente Médici',
-  linkLocal: 'https://maps.google.com/?q=...',
-  mensagemConvite: 'chegou a hora de celebrar...',
+  aniversariante: 'Maria',
+  idade: '30',
+  data: 'Sábado, 15 de março de 2026',
+  horario: '14h00',
+  local: 'Rua das Palmeiras, 200 — Jardim Primavera',
+  linkLocal: 'https://maps.google.com/?q=Rua+das+Palmeiras,200',
+  mensagemConvite: 'chegou a hora de celebrar os 30 anos de Maria! Vai ter festa, bolo e muita alegria.',
   observacoes: 'Bebidas alcoólicas serão por conta de cada convidado. 🍺',
 }
 ```

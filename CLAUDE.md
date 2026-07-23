@@ -6,10 +6,7 @@ Este arquivo descreve o projeto, as decisões tomadas e as convenções adotadas
 
 ## O que é o projeto
 
-App web de convite interativo para a festa de 35 anos de **Thalisson** (02/08/2026, 12h00, Rua Senador João Cavalcante de Arruda, 844 — Presidente Médici). Os convidados recebem um link, confirmam ou recusam presença, e o organizador acompanha tudo em um painel protegido.
-
-**Repositório:** https://github.com/thalissonsousa17/convite-niver  
-**Deploy:** https://convite-niver-umber.vercel.app
+App web de convite interativo com RSVP. Os convidados recebem um link, confirmam ou recusam presença, e o organizador acompanha tudo em um painel protegido em `/admin`.
 
 ---
 
